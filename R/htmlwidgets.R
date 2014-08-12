@@ -86,9 +86,7 @@ toHTML.htmlwidget <- function(x, standalone = FALSE, knitrOptions = NULL, ...){
       )
     }
   )
-  html <- htmltools::attachDependencies(html, 
-    widget_dependencies(class(x)[1], attr(x, 'package'))
-  )
+  html <- htmltools::attachDependencies(html, attr(x, 'dependencies'))
   
   htmltools::browsable(html)
   
@@ -107,7 +105,12 @@ widget_html <- function(name, id, style, class, ...){
 
 #' @export
 widget_dependencies <- function(name, package){
-  getDependency(name, package)
+  fn = paste0(name, "_dependencies")
+  if (exists(fn) && is.function(match.fun(fn))){
+    match.fun(fn)()
+  } else {
+    getDependency(name, package)
+  }
 }
 
 # Generates a <script type="application/json"> tag with the JSON-encoded data,
@@ -125,7 +128,8 @@ createWidget <- function(name,
                          width = NULL,
                          height = NULL,
                          sizingPolicy = htmlwidgets::sizingPolicy(), 
-                         package = name) {  
+                         package = name,
+                         dependencies = getDependency(name, package)) {  
   structure(
     list(x = x,
          width = width,
@@ -134,7 +138,8 @@ createWidget <- function(name,
     class = c(name, 
               if (sizingPolicy$viewer$suppress) "suppress_viewer", 
               "htmlwidget"),
-    package = package
+    package = package,
+    dependencies = dependencies
   )
 }
 
