@@ -1,14 +1,14 @@
 #' @export
-add_new_widget <- function(name, package){
+addNewWidget <- function(name, package){
   if (!file.exists('DESCRIPTION')){
     stop("You need to create a package to house your widget first!", call. = F)
   }
-  add_widget_constructor(name, package)
-  add_widget_yaml(name)
-  add_widget_js(name)
+  addWidgetConstructor(name, package)
+  addWidgetYAML(name)
+  addWidgetJS(name)
 }
 
-add_widget_constructor <- function(name, package = name){
+addWidgetConstructor <- function(name, package = name){
   tpl <- "#' <Add Title>
 #'
 #' <Add Description>
@@ -52,7 +52,7 @@ render%s <- function(expr, env = parent.frame(), quoted = FALSE) {
   )
 }
 
-add_widget_yaml <- function(name){
+addWidgetYAML <- function(name){
   tpl <- "# widget dependencies
 dependencies:
   - name:
@@ -70,7 +70,7 @@ dependencies:
   )
 }
 
-add_widget_js <- function(name){
+addWidgetJS <- function(name){
   tpl <- "// widget binding
 HTMLWidgets.widget({
   name: '%s',
